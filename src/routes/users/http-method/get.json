@@ -1,0 +1,61 @@
+[
+  {
+    "requestUrl": "/users",
+    "response": {
+      "status": 200,
+      "statusText": "",
+      "data": [
+        {
+          "id": 1,
+          "name": "Lee Ji Eun",
+          "birthDay": "1993-05-16"
+        },
+        {
+          "id": 2,
+          "name": "Ha Sung Woon",
+          "birthDay": "1994-10-22"
+        }
+      ]
+    }
+  },
+  {
+    "requestUrl": "/users/1",
+    "header": {
+      "useAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "",
+      "data": {
+        "id": 1,
+        "name": "Lee Ji Eun",
+        "birthDay": "1993-05-16"
+      }
+    }
+  },
+  {
+    "requestUrl": "/users/2",
+    "header": {
+      "useAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "",
+      "data": {
+        "id": 2,
+        "name": "Ha Sung Woon",
+        "birthDay": "1994-10-22"
+      }
+    }
+  },
+  {
+    "requestUrl": "/users/3",
+    "header": {
+      "useAuth": true
+    },
+    "error": {
+      "status": 500,
+      "statusText": "No User"
+    }
+  }
+]
