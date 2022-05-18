@@ -53,9 +53,13 @@
     "header": {
       "useAuth": true
     },
-    "error": {
+    "response": {
       "status": 500,
-      "statusText": "No User"
+      "statusText": "No User",
+      "error": {
+        "message": "No User",
+        "name": ""
+      }
     }
   }
 ]

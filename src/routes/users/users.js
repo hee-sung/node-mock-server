@@ -1,5 +1,5 @@
-const getRouter = require('../index');
+const makeRouter = require('../index');
 
-const router = getRouter(`${__dirname}/http-method`);
+const router = makeRouter(`${__dirname}/http-method`);
 
 module.exports = router;

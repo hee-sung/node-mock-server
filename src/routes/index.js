@@ -14,16 +14,18 @@ checkAuth = (data, req, next) => {
 }
 
 checkError = (data, next) => {
-  if (data.error) {
+  if (data.response.error) {
     const error = new Error();
-    error.status = data.error.status;
-    error.statusText = data.error.statusText;
+    error.status = data.response.status;
+    error.statusText = data.response.statusText;
+    error.message = data.response.error.message;
+    error.name = data.response.error.name;
 
     next(error);
   }
 }
 
-getRouter = (baseDir) => {
+makeRouter = (baseDir) => {
   const methods = ['get', 'post', 'put', 'delete'];
 
   methods.forEach((method) => {
@@ -41,7 +43,6 @@ getRouter = (baseDir) => {
             checkAuth(data, req, next);
             checkError(data, next);
 
-            console.warn('bbbb')
             res.status(data.response.status);
             res.send(data.response.data);
           })
@@ -84,4 +85,4 @@ getRouter = (baseDir) => {
   return router;
 }
 
-module.exports = getRouter;
+module.exports = makeRouter;
