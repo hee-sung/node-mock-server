@@ -1,0 +1,17 @@
+[
+  {
+    "requestUrl": "/users",
+    "header": {
+      "useAuth": true
+    },
+    "response": {
+      "status": 200,
+      "statusText": "",
+      "data": {
+        "id": 4,
+        "name": "woodz",
+        "birthDay": "1996-08-05"
+      }
+    }
+  }
+]

@@ -54,10 +54,10 @@
       "useAuth": true
     },
     "response": {
-      "status": 500,
-      "statusText": "No User",
+      "status": 400,
+      "statusText": "Bad Request",
       "error": {
-        "message": "No User",
+        "message": "No Search User",
         "name": ""
       }
     }
