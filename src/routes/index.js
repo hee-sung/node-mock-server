@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const router = express.Router();
 
-checkAuth = (data, req, next) => {
+makeResponse = (data, req, res, next) => {
   if (data.header && data.header.useAuth && !req.headers.authorization) {
     const error = new Error();
     error.status = 401;
@@ -11,17 +11,26 @@ checkAuth = (data, req, next) => {
 
     next(error);
   }
-}
 
-checkError = (data, next) => {
   if (data.response.error) {
     const error = new Error();
-    error.status = data.response.status;
-    error.statusText = data.response.statusText;
+    error.status = data.response.status || 500;
+    error.statusText = data.response.statusText || '';
     error.message = data.response.error.message;
     error.name = data.response.error.name;
 
     next(error);
+  }
+
+  if (data.response.status) {
+    res.status(data.response.status);
+  } else {
+    res.status(200);
+  }
+
+
+  if (Object.keys(data.response.data).length > 0) {
+    res.send(data.response.data);
   }
 }
 
@@ -38,44 +47,29 @@ makeRouter = (baseDir) => {
       const jsonData = JSON.parse(data);
 
       jsonData.forEach((data) => {
-        if ('get' === method) {
-          router.get(data.requestUrl, (req, res, next) => {
-            checkAuth(data, req, next);
-            checkError(data, next);
 
-            res.status(data.response.status);
-            res.send(data.response.data);
-          })
-        } else if ('post' === method) {
-          router.post(data.requestUrl, (req, res, next) => {
-            checkAuth(data, req, next);
-            checkError(data, next);
-
-            res.status(data.response.status);
-
-            if (Object.keys(data.response.data).length > 0) {
-              res.send(data.response.data);
-            }
-
-          });
-        } else if ('put' === method) {
-          router.put(data.requestUrl, (req, res, next) => {
-            checkAuth(data, req, next);
-            checkError(data, next);
-
-            res.status(data.response.status);
-            res.send(data.response.data);
-          })
-        } else if ('delete' === method) {
-          router.delete(data.requestUrl, (req, res, next) => {
-            checkAuth(data, req, next);
-            checkError(data, next);
-
-            res.status(data.response.status);
-          });
-
+        switch (method) {
+          case "get":
+            router.get(data.requestUrl, (req, res, next) => {
+              makeResponse(data, req, res, next);
+            });
+            break;
+          case "post":
+            router.post(data.requestUrl, (req, res, next) => {
+              makeResponse(data, req, res, next);
+            });
+            break;
+          case "put":
+            router.put(data.requestUrl, (req, res, next) => {
+              makeResponse(data, req, res, next);
+            });
+            break;
+          case "delete":
+            router.delete(data.requestUrl, (req, res, next) => {
+              makeResponse(data, req, res, next);
+            });
+            break;
         }
-
       })
     } catch(err) {
       console.error(err);

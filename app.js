@@ -21,10 +21,10 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  res.locals.message = err.message;
+  res.locals.message = err.message || error.statusText;
   res.locals.error = err;
-  res.status(err.status || 500);
-  res.send(err.statusText);
+  res.status(err.status);
+  res.send({ message: err.message || error.statusText});
 })
 
 app.listen(port, () => {
