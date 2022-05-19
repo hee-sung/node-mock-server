@@ -1,10 +1,11 @@
 const express = require('express');
 const fs = require('fs');
+const MockObject = require("../models/MockObject.js");
 
 const router = express.Router();
 
-makeResponse = (data, req, res, next) => {
-  if (data.header && data.header.useAuth && !req.headers.authorization) {
+makeResponse = (mockObject, req, res, next) => {
+  if (mockObject.useAuth() && !req.headers.authorization) {
     const error = new Error();
     error.status = 401;
     error.statusText = 'Unauthorized';
@@ -12,25 +13,20 @@ makeResponse = (data, req, res, next) => {
     next(error);
   }
 
-  if (data.response.error) {
+  if (mockObject.hasErrorOfResponse()) {
     const error = new Error();
-    error.status = data.response.status || 500;
-    error.statusText = data.response.statusText || '';
-    error.message = data.response.error.message;
-    error.name = data.response.error.name;
+    error.status = mockObject.getStatusOfResponse() || 500;
+    error.statusText = mockObject.getStatusTextOfResponse() || '';
+    error.message = mockObject.getErrorMessageOfResponse();
+    error.name = mockObject.getErrorNameOfResponse();
 
     next(error);
   }
 
-  if (data.response.status) {
-    res.status(data.response.status);
-  } else {
-    res.status(200);
-  }
+  res.status(mockObject.getStatusOfResponse());
 
-
-  if (Object.keys(data.response.data).length > 0) {
-    res.send(data.response.data);
+  if (mockObject.hasDataOfResponse()) {
+    res.send(mockObject.getDataOfResponse());
   }
 }
 
@@ -47,26 +43,27 @@ makeRouter = (baseDir) => {
       const jsonData = JSON.parse(data);
 
       jsonData.forEach((data) => {
+        const mockObject = new MockObject(data);
 
         switch (method) {
           case "get":
-            router.get(data.requestUrl, (req, res, next) => {
-              makeResponse(data, req, res, next);
+            router.get(mockObject.requestUrl, (req, res, next) => {
+              makeResponse(mockObject, req, res, next);
             });
             break;
           case "post":
-            router.post(data.requestUrl, (req, res, next) => {
-              makeResponse(data, req, res, next);
+            router.post(mockObject.requestUrl, (req, res, next) => {
+              makeResponse(mockObject, req, res, next);
             });
             break;
           case "put":
-            router.put(data.requestUrl, (req, res, next) => {
-              makeResponse(data, req, res, next);
+            router.put(mockObject.requestUrl, (req, res, next) => {
+              makeResponse(mockObject, req, res, next);
             });
             break;
           case "delete":
-            router.delete(data.requestUrl, (req, res, next) => {
-              makeResponse(data, req, res, next);
+            router.delete(mockObject.requestUrl, (req, res, next) => {
+              makeResponse(mockObject, req, res, next);
             });
             break;
         }
